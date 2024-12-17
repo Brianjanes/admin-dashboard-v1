@@ -1,18 +1,36 @@
 // src/app/api/users/route.ts
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
+import { ObjectId } from "mongodb";
+import { transformUsers } from "@/lib/transformers";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
+    const ids = searchParams.get("ids")?.split(",") || [];
     const search = searchParams.get("search") || "";
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "10");
 
     const client = await clientPromise;
     const db = client.db(process.env.MONGODB_DB);
 
-    // Build search query
-    const query = search
+    // Build query
+    const query = ids.length
+      ? {
+          _id: {
+            $in: ids.map((id) => {
+              try {
+                return new ObjectId(id);
+              } catch (e) {
+                console.error(`Invalid ObjectId: ${id}`);
+                return id;
+              }
+            }),
+          },
+        }
+      : search
       ? {
           $or: [
             { name: { $regex: search, $options: "i" } },
@@ -21,15 +39,29 @@ export async function GET(request: NextRequest) {
         }
       : {};
 
-    const users = await db.collection("users").find(query).toArray();
+    // console.log("Users query:", query);
+
+    const total = await db.collection("users").countDocuments(query);
+
+    const users = await db
+      .collection("users")
+      .find(query)
+      .skip((page - 1) * limit)
+      .limit(limit)
+      .toArray();
+
+    // console.log("Found users:", users);
+
+    // Transform the users using the imported transformer
+    const transformedUsers = transformUsers(users);
 
     return NextResponse.json({
-      users,
+      users: transformedUsers,
       pagination: {
-        total: users.length,
-        page: 1,
-        limit: 10,
-        pages: 1,
+        total,
+        page,
+        limit,
+        pages: Math.ceil(total / limit),
       },
     });
   } catch (error) {
