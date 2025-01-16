@@ -1,7 +1,7 @@
 // src/app/dashboard/queries/[queryId]/page.tsx
 "use client";
 
-import { useQueryDetail } from "@/hooks/use-query-detail";
+import { useQueryDetail } from "@/hooks/queries/use-query-detail";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { formatDate } from "@/lib/utils";
 import { ArrowLeft, ChevronDown, ChevronUp, Clock, Zap } from "lucide-react";

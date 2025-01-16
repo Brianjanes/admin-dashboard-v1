@@ -1,0 +1,21 @@
+{
+  "user_id": "google-oauth2|114638791714277286996",
+  "user_profile": {
+    "_id": "673b6a69832ac210a0fbf0bd",
+    "name": "Sulagno",
+    "email": "sulagnog@gmail.com",
+    "phone": "7093279829",
+    "companyName": "atlantiqai",
+    "industry": "Technology",
+    "companySize": "1-10",
+    "street": "40 graves st",
+    "city": "St johns",
+    "province": "NL",
+    "postalCode": "A1B 3C5",
+    "url": "https://atlantiq.ai",
+    "timeZone": "utc-3:30",
+    "userId": "google-oauth2|114638791714277286996",
+    "indexingStatus": "indexing-completed",
+    "message": "Tell me why is python useful"
+  }
+}

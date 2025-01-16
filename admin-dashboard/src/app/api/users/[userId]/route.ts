@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { transformUser } from "@/lib/transformers";
+import type { MongoUser } from "@/lib/transformers";
 
 export async function GET(
   request: Request,
@@ -14,9 +15,9 @@ export async function GET(
     const db = client.db(process.env.MONGODB_DB);
 
     // Fetch user
-    const user = await db
+    const user = (await db
       .collection("users")
-      .findOne({ _id: new ObjectId(userId) });
+      .findOne({ _id: new ObjectId(userId) })) as unknown as MongoUser;
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });

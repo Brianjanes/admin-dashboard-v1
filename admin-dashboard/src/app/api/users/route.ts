@@ -4,6 +4,7 @@ import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { transformUsers } from "@/lib/transformers";
 import type { NextRequest } from "next/server";
+import type { MongoUser } from "@/lib/transformers";
 
 export async function GET(request: NextRequest) {
   try {
@@ -23,9 +24,8 @@ export async function GET(request: NextRequest) {
             $in: ids.map((id) => {
               try {
                 return new ObjectId(id);
-              } catch (e) {
-                console.error(`Invalid ObjectId: ${id}`);
-                return id;
+              } catch {
+                return new ObjectId();
               }
             }),
           },
@@ -43,12 +43,12 @@ export async function GET(request: NextRequest) {
 
     const total = await db.collection("users").countDocuments(query);
 
-    const users = await db
+    const users = (await db
       .collection("users")
       .find(query)
       .skip((page - 1) * limit)
       .limit(limit)
-      .toArray();
+      .toArray()) as unknown as MongoUser[];
 
     // console.log("Found users:", users);
 

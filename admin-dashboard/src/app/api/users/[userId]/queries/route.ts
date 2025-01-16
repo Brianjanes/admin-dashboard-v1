@@ -1,7 +1,7 @@
 // src/app/api/users/[userId]/queries/route.ts
 import { NextResponse } from "next/server";
 import clientPromise from "@/lib/mongodb";
-import { transformQueries } from "@/lib/transformers";
+import { transformQueries, type MongoQuery } from "@/lib/transformers";
 
 export async function GET(
   request: Request,
@@ -12,12 +12,12 @@ export async function GET(
     const client = await clientPromise;
     const db = client.db(process.env.MONGODB_DB);
 
-    const queries = await db
+    const queries = (await db
       .collection("queries")
       .find({ userId: userId })
       .sort({ date: -1 })
       .limit(10)
-      .toArray();
+      .toArray()) as unknown as MongoQuery[];
 
     return NextResponse.json({
       queries: transformQueries(queries),

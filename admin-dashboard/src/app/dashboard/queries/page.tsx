@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { Search } from "lucide-react";
 import { formatDate } from "@/lib/utils";
-import { useQueries } from "@/hooks/use-queries";
+import { useQueries } from "@/hooks/queries/use-queries";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import type { Query } from "@/types/query";
 import Link from "next/link";
